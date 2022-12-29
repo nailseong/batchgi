@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 public class HelloWorldBatch {
 
     private static final String NAME = "name";
-    
+
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
@@ -28,15 +28,17 @@ public class HelloWorldBatch {
     public Job helloWorldJob() {
         return jobBuilderFactory.get("helloWorldJob")
                 .incrementer(new RunIdIncrementer())
+                .validator(validator())
+                .listener(new JobLoggerListener())
                 .start(greetingStep())
                 .next(helloWorldStep())
-                .validator(validator())
                 .build();
     }
 
     @Bean
     public Step greetingStep() {
         return stepBuilderFactory.get("greetingStep")
+                .listener(new StepLoggerListener())
                 .tasklet(greetingTasklet(null))
                 .build();
     }
@@ -53,6 +55,7 @@ public class HelloWorldBatch {
     @Bean
     public Step helloWorldStep() {
         return stepBuilderFactory.get("helloWorldStep")
+                .listener(new StepLoggerListener())
                 .tasklet(batchgiTasklet())
                 .build();
     }
