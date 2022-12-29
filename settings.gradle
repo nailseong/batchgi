@@ -1,1 +1,3 @@
 rootProject.name = 'batchgi'
+include 'batchgi-batch'
+
